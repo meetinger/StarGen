@@ -16,7 +16,7 @@ def read_table(path, header_line, delimiter=" ", header_params=None):
     # header = table[header_line - 1].split(delimiter)
     # header = [s.strip() for s in header if (s != '') and (s != '#')]
 
-    header_orig = clean_split(table[header_line - 1], delimiter=' ', ex_chars=['', '#'])
+    header_orig = clean_split(table[header_line], delimiter=' ', ex_chars=['', '#'])
 
     header = header_orig
 
@@ -42,7 +42,7 @@ def read_table(path, header_line, delimiter=" ", header_params=None):
 
     res = []
 
-    for i in range(header_line, len(table)):
+    for i in range(header_line+1, len(table)):
         line = clean_split(table[i], delimiter=' ', ex_chars=['', '#'])
         tmp = dict.fromkeys(header)
         for key in header:
@@ -50,6 +50,22 @@ def read_table(path, header_line, delimiter=" ", header_params=None):
         res.append(tmp)
     return res
 
-def convert_table_to_track(path):
-    data = pd.read_table(path, skiprows=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], delimiter='\s\s\s\s\s\s')
-    return data
+
+def convert_table_to_track(path, params=None):
+    if params is None:
+        params = ['star_age', 'star_mass', 'log_L', 'log_Teff', 'phase']
+    raw_data = read_table(path, header_line=11, delimiter=" ", header_params=params)
+
+    tmp_data = []
+
+    for line in raw_data:
+        tmp = {i: float(line[i]) for i in line}
+        tmp_data.append(tmp)
+
+    return tmp_data
+    # return data
+
+
+def get_column_from_table_dict(data, key):
+    tmp = [line[key] for line in data]
+    return tmp
