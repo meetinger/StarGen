@@ -7,10 +7,12 @@ def clean_split(str, delimiter, ex_chars=None):
     cleaned = [s.strip() for s in splitted if not(s in ex_chars)]
     return cleaned
 
-def read_table(path, header_line, delimiter=" ", header_params=None):
+def read_table(path, header_line, delimiter=" ", header_params=None, max_line=None):
     # with open(path, 'r') as table:
     #     for _ in range(header):
     #         table.next()
+
+
     table = open(path, 'r').readlines()
     # print(table)
     # header = table[header_line - 1].split(delimiter)
@@ -42,7 +44,10 @@ def read_table(path, header_line, delimiter=" ", header_params=None):
 
     res = []
 
-    for i in range(header_line+1, len(table)):
+    if max_line is None:
+        max_line = len(table)
+
+    for i in range(header_line+1, max_line):
         line = clean_split(table[i], delimiter=' ', ex_chars=['', '#'])
         tmp = dict.fromkeys(header)
         for key in header:
