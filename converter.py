@@ -1,3 +1,5 @@
+import random
+
 import pandas as pd
 import torch
 from torch.utils.data import TensorDataset, DataLoader
@@ -109,3 +111,23 @@ def create_dataset(data, dataset_obj=True):
     # else:
     #     return x, y
     return x, y
+
+def split_dataset(full, amount=0.8):
+    full_size = len(full)
+
+    train_size = int(amount * full_size)
+    test_size = full_size - train_size
+
+    indexes = list(range(len(full)))
+    random.shuffle(indexes)
+
+    train_data = []
+    test_data = []
+
+    for i in indexes:
+        if i < train_size:
+            train_data.append(full[i])
+        else:
+            test_data.append(full[i])
+
+    return (train_data, test_data)

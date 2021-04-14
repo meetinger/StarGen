@@ -8,7 +8,7 @@ import torch.nn.functional as F
 from torch import optim
 from torch.utils.data import DataLoader
 
-from converter import create_dataset, convert_table_to_track
+from converter import create_dataset, convert_table_to_track, split_dataset
 
 
 class Net(nn.Module):
@@ -58,16 +58,9 @@ full_dict = dict(zip(full_x,full_y))
 
 print(full_dict)
 
+train_data, test_data = split_dataset(full_dict, 0.6)
 
-train_size = int(0.6 * len(full_dict))
-test_size = len(full_dict) - train_size
-
-indexes = list(range(len(full_dict)))
-print(indexes)
-random.shuffle(indexes)
-print(indexes)
-
-train_data
+print(train_data, test_data)
 
 # full_dataset = create_dataset(track)
 #
