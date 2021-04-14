@@ -1,3 +1,4 @@
+import os
 import random
 
 import pandas as pd
@@ -112,22 +113,47 @@ def create_dataset(data, dataset_obj=True):
     #     return x, y
     return x, y
 
-def split_dataset(full, amount=0.8):
-    full_size = len(full)
+
+def split_dataset_dict(data, amount=0.8):
+    full_size = len(data)
 
     train_size = int(amount * full_size)
     test_size = full_size - train_size
 
-    indexes = list(range(len(full)))
+    indexes = list(range(len(data)))
     random.shuffle(indexes)
 
     train_data = []
     test_data = []
 
+    full_keys = data.keys()
+
     for i in indexes:
         if i < train_size:
-            train_data.append(full[i])
+            train_data.append({list(full_keys)[i]: data[list(full_keys)[i]]})
         else:
-            test_data.append(full[i])
+            test_data.append({list(full_keys)[i]: data[list(full_keys)[i]]})
 
     return (train_data, test_data)
+
+
+def create_big_dataset(path):
+    files = os.listdir(path)
+    # tracks = [convert_table_to_track(dir+'/'+i) for i in files]
+    tracks = []
+    counter = 0
+
+    for i in files:
+        tmp = convert_table_to_track(path + '/' + i)
+        tracks.append(tmp)
+        counter = counter + 1
+        print("Loading dataset, " + str(counter / len(files) * 100) + "% complete")
+
+    zipped_dataset = []
+
+    for i in tracks:
+        tmp_x, tmp_y = create_dataset(i, False)
+        tmp = dict(zip(tmp_x, tmp_y))
+        zipped_dataset.append(tmp)
+
+    return zipped_dataset

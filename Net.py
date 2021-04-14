@@ -8,7 +8,7 @@ import torch.nn.functional as F
 from torch import optim
 from torch.utils.data import DataLoader
 
-from converter import create_dataset, convert_table_to_track, split_dataset
+from converter import create_dataset, convert_table_to_track, split_dataset_dict
 
 
 class Net(nn.Module):
@@ -45,22 +45,24 @@ class Net(nn.Module):
 
 torch.manual_seed(42)
 
-track = convert_table_to_track('datasets/tracks/0001000M.track.eep')
-# track = convert_table_to_track('datasets/test.eep')
+# track = convert_table_to_track('datasets/tracks/0001000M.track.eep')
+track = convert_table_to_track('datasets/test.eep')
 
 model = Net()
 
 full_x, full_y = create_dataset(track, False)
 
-print(full_x, full_y)
+print(full_x,)
 
-full_dict = dict(zip(full_x,full_y))
-
-print(full_dict)
-
-train_data, test_data = split_dataset(full_dict, 0.6)
-
-print(train_data, test_data)
+# full_zip = dict(zip(full_x, full_y))
+#
+# # print(full_zip)
+#
+# train_data, test_data = split_dataset_dict(full_zip, 0.9)
+#
+# print(train_data, test_data)
+#
+# print(len(train_data), len(test_data))
 
 # full_dataset = create_dataset(track)
 #
