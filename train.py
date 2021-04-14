@@ -1,0 +1,107 @@
+import os
+
+import numpy as np
+import torch
+from torch import nn
+from torch.utils.data import DataLoader
+
+from Net import Net
+from TrackDataset import TrackDataset
+from converter import convert_table_to_track, create_dataset
+
+torch.manual_seed(42)
+
+track = convert_table_to_track('datasets/tracks/0010000M.track.eep')
+# track = convert_table_to_track('datasets/test.eep')
+
+model = Net()
+
+full_x, full_y = create_dataset(track, False)
+
+full_x = torch.Tensor(full_x)
+full_y = torch.Tensor(full_y)
+
+full_dataset = TrackDataset(full_x, full_y)
+
+train_size = int(0.8 * len(full_dataset))
+test_size = len(full_dataset) - train_size
+
+train_dataset, test_dataset = torch.utils.data.random_split(full_dataset, [train_size, test_size])
+
+train_loader = DataLoader(train_dataset, batch_size=50, shuffle=True)
+valid_loader = DataLoader(test_dataset, batch_size=50, shuffle=True)
+
+
+
+
+criterion = nn.L1Loss()
+
+# specify optimizer (stochastic gradient descent) and learning rate = 0.01
+
+
+
+n_epochs = 100
+
+# initialize tracker for minimum validation loss
+valid_loss_min = np.Inf  # set initial "min" to infinity
+
+learning_rate = 0.00000000000000000001
+optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
+
+if os.path.isfile('model.pt'):
+    model.load_state_dict(torch.load('model.pt'))
+
+for epoch in range(n_epochs):
+    # monitor training loss
+    train_loss = 0.0
+    valid_loss = 0.0
+
+    ###################
+    # train the model #
+    ###################
+    model.train()  # prep model for training
+    for data, target in train_loader:
+        # clear the gradients of all optimized variables
+        optimizer.zero_grad()
+        # forward pass: compute predicted outputs by passing inputs to the model
+        output = model(data)
+        # calculate the loss
+
+        loss = criterion(output, target)
+        # backward pass: compute gradient of the loss with respect to model parameters
+        loss.backward()
+        # perform a single optimization step (parameter update)
+        optimizer.step()
+        # update running training loss
+        train_loss += loss.item() * data.size(0)
+
+    ######################
+    # validate the model #
+    ######################
+    model.eval()  # prep model for evaluation
+    for data, target in valid_loader:
+        # forward pass: compute predicted outputs by passing inputs to the model
+        output = model(data)
+        # calculate the loss
+        loss = criterion(output, target)
+        # update running validation loss
+        valid_loss += loss.item() * data.size(0)
+
+    # print training/validation statistics
+    # calculate average loss over an epoch
+    train_loss = train_loss / len(train_loader.dataset)
+    valid_loss = valid_loss / len(valid_loader.dataset)
+
+    print('Epoch: {} \tTraining Loss: {:.6f} \tValidation Loss: {:.6f}'.format(
+        epoch + 1,
+        train_loss,
+        valid_loss
+    ))
+
+    # save model if validation loss has decreased
+    if valid_loss <= valid_loss_min:
+        print('Validation loss decreased ({:.6f} --> {:.6f}).  Saving model ...'.format(
+            valid_loss_min,
+            valid_loss))
+        torch.save(model.state_dict(), 'model.pt')
+        valid_loss_min = valid_loss

@@ -111,7 +111,20 @@ def create_dataset(data, dataset_obj=True):
     #     return dataset
     # else:
     #     return x, y
+    print(len(x), len(y))
     return x, y
+
+# def split_dataset_x_y(x, y, amount):
+#     full_size = len(x)
+#
+#     train_size = int(amount * full_size)
+#     test_size = full_size - train_size
+#
+#     indexes = list(range(full_size))
+#     random.shuffle(indexes)
+#
+#     x_train, y_train, x_test, y_train = [], [], [], []
+
 
 
 def split_dataset_dict(data, amount=0.8):
@@ -120,22 +133,36 @@ def split_dataset_dict(data, amount=0.8):
     train_size = int(amount * full_size)
     test_size = full_size - train_size
 
-    indexes = list(range(len(data)))
+    indexes = list(range(full_size))
     random.shuffle(indexes)
 
-    train_data = []
-    test_data = []
+    if type(data) is dict:
+        train_data = []
+        test_data = []
 
-    full_keys = data.keys()
+        full_keys = data.keys()
 
-    for i in indexes:
-        if i < train_size:
-            train_data.append({list(full_keys)[i]: data[list(full_keys)[i]]})
-        else:
-            test_data.append({list(full_keys)[i]: data[list(full_keys)[i]]})
+        for i in indexes:
+            if i < train_size:
+                train_data.append({list(full_keys)[i]: data[list(full_keys)[i]]})
+            else:
+                test_data.append({list(full_keys)[i]: data[list(full_keys)[i]]})
 
-    return (train_data, test_data)
+        return (train_data, test_data)
 
+    if (type(data) is list) or (type(data) is tuple):
+        x, y = data
+        x_train, y_train, x_test, y_test = [], [], [], []
+
+        for i in indexes:
+            if i < train_size:
+                x_train.append(x[i])
+                y_train.append(y[i])
+            else:
+                x_test.append(x[i])
+                y_test.append(y[i])
+        print(len(x_train), len(y_train), len(x_test), len(y_test))
+        return (x_train, y_train, x_test, y_test)
 
 def create_big_dataset(path):
     files = os.listdir(path)
