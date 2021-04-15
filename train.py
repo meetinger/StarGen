@@ -27,7 +27,7 @@ full_y = torch.Tensor(full_y)
 
 full_dataset = TrackDataset(full_x, full_y)
 
-train_size = int(0.9 * len(full_dataset))
+train_size = int(0.75 * len(full_dataset))
 valid_size = len(full_dataset) - train_size
 
 train_dataset, test_dataset = torch.utils.data.random_split(full_dataset, [train_size, valid_size])
@@ -45,7 +45,7 @@ criterion = nn.L1Loss()
 
 
 
-n_epochs = 50
+n_epochs = 500
 
 # initialize tracker for minimum validation loss
 valid_loss_min = np.Inf  # set initial "min" to infinity
