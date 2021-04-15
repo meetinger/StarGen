@@ -19,14 +19,17 @@ class Net(nn.Module):
             nn.Linear(2, 500),
             nn.Tanh(),
 
-            nn.Linear(500, 700),
+            nn.Linear(500,700),
             nn.Dropout(),
             nn.Tanh(),
 
             nn.Linear(700, 4),
+            nn.Dropout(),
+            nn.Tanh(),
 
+            nn.Linear(4, 4),
 
-            # nn.Linear(4, 4),
+            nn.Linear(4, 4),
         )
         # self.ce = nn.CrossEntropyLoss()
 
