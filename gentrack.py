@@ -15,7 +15,7 @@ log_Teff=[]
 
 track = []
 age = 1465471476
-for i in range(0, age, 200000000):
+for i in range(0, age, 100000000):
     data = torch.Tensor([1, i])
     output = model(data).tolist()
     print(output)

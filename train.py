@@ -50,7 +50,7 @@ n_epochs = 100
 # initialize tracker for minimum validation loss
 valid_loss_min = np.Inf  # set initial "min" to infinity
 
-learning_rate = 1e-2
+learning_rate = 1e-3
 
 # optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
 optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
@@ -76,6 +76,7 @@ for epoch in range(n_epochs):
         # forward pass: compute predicted outputs by passing inputs to the model
         # print(data, target)
         output = model(data)
+        # print(target)
         # calculate the loss
 
         loss = criterion(output, target)
