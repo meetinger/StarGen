@@ -16,19 +16,14 @@ class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
         self.layers = nn.Sequential(
-            nn.Linear(2, 100),
+            nn.Linear(2, 500),
             nn.Tanh(),
 
-            nn.Linear(100, 250),
-            nn.Dropout(),
-            nn.Tanh(),
-
-            nn.Linear(250, 100),
-            nn.Dropout(),
+            nn.Linear(500,500),
             nn.Tanh(),
 
 
-            nn.Linear(100, 4),
+            nn.Linear(500, 4),
 
 
             # nn.Linear(4, 4),

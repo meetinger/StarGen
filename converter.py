@@ -103,7 +103,7 @@ def create_dataset(data, dataset_obj=True):
     initial_params = data['initial_params']
     track = data['track']
 
-    x = [(initial_params['initial_mass'], math.log10(i['star_age'])) for i in track]
+    x = [(initial_params['initial_mass'], math.log10(i['star_age'])/2) for i in track]
 
 
 

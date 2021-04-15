@@ -13,17 +13,20 @@ import matplotlib.pyplot as plt
 torch.manual_seed(42)
 
 
+
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+model = Net().cuda(device)
+
 # track = convert_table_to_track('datasets/test.eep')
-
-model = Net()
-
 track = convert_table_to_track('datasets/tracks/0010000M.track.eep')
 
 full_x, full_y = create_dataset(track, False)
 # full_x, full_y = create_big_dataset('datasets/tracks_mini')
 
-full_x = torch.Tensor(full_x)
-full_y = torch.Tensor(full_y)
+full_x = torch.Tensor(full_x).to(device)
+full_y = torch.Tensor(full_y).to(device)
 
 full_dataset = TrackDataset(full_x, full_y)
 
@@ -32,8 +35,8 @@ valid_size = len(full_dataset) - train_size
 
 train_dataset, test_dataset = torch.utils.data.random_split(full_dataset, [train_size, valid_size])
 
-train_loader = DataLoader(train_dataset, batch_size=50, shuffle=False)
-valid_loader = DataLoader(test_dataset, batch_size=50, shuffle=False)
+train_loader = DataLoader(train_dataset, batch_size=50, shuffle=True)
+valid_loader = DataLoader(test_dataset, batch_size=50, shuffle=True)
 
 
 
@@ -50,10 +53,10 @@ n_epochs = 500
 # initialize tracker for minimum validation loss
 valid_loss_min = np.Inf  # set initial "min" to infinity
 
-learning_rate = 1e-3
+learning_rate = 5e-6
 
 # optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
-optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
+optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
 if os.path.isfile('model.pt'):
     model.load_state_dict(torch.load('model.pt'))

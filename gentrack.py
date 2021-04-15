@@ -18,7 +18,7 @@ log_Teff=[]
 track = []
 age = 11465471475
 for i in range(1, age, 100000000):
-    data = torch.Tensor([1, math.log10(i)])
+    data = torch.Tensor([1, math.log10(i)/2])
     output = model(data).tolist()
     print(output)
     L = output[1]
@@ -33,11 +33,12 @@ for i in range(1, age, 100000000):
     print(i/age*100, '%')
 
 # print(log_L)
-plt.plot(log_L, log_Teff)
+plt.plot(log_L, log_Teff, label = 'Generated')
 plt.xlabel('log_Teff')
 plt.ylabel('log_L')
 # plt.gca().invert_xaxis()
 
 path = 'datasets/tracks/0010000M.track.eep'
+# path = 'datasets/test.eep'
 track = convert_table_to_track(path)
 draw_track(track)
