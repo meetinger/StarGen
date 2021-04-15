@@ -50,7 +50,7 @@ n_epochs = 100
 # initialize tracker for minimum validation loss
 valid_loss_min = np.Inf  # set initial "min" to infinity
 
-learning_rate = 1e-3
+learning_rate = 1e-4
 
 # optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
 optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)

@@ -17,26 +17,16 @@ class Net(nn.Module):
         super(Net, self).__init__()
         self.layers = nn.Sequential(
             nn.Linear(2, 500),
-
+            nn.ReLU(),
 
             nn.Linear(500, 1000),
-            nn.LeakyReLU(),
-
-
-            nn.Linear(1000, 1000),
             nn.Dropout(),
-            nn.LeakyReLU(),
-
-
-
+            nn.Tanh(),
             nn.Linear(1000, 500),
-            nn.LeakyReLU(),
+            nn.Dropout(),
+            nn.Tanh(),
 
-
-            nn.Linear(500, 3),
-            # nn.LeakyReLU(),
-
-            nn.Linear(3, 3),
+            nn.Linear(500, 4),
 
 
             # nn.Linear(4, 4),

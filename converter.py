@@ -1,6 +1,6 @@
 import os
 import random
-
+import math
 import pandas as pd
 import torch
 from torch.utils.data import TensorDataset, DataLoader
@@ -93,13 +93,21 @@ def get_column_from_table_dict(data, key):
     return tmp
 
 
+def scale_data(data):
+    pass
+
+def unscale_data(data):
+    pass
+
 def create_dataset(data, dataset_obj=True):
     initial_params = data['initial_params']
     track = data['track']
 
-    x = [(initial_params['initial_mass'], i['star_age']) for i in track]
+    x = [(initial_params['initial_mass'], math.log10(i['star_age'])) for i in track]
 
-    y = [tuple(i.values())[2::] for i in track]
+
+
+    y = [tuple(i.values())[1::] for i in track]
 
     # if(dataset_obj):
     #     tensor_x = torch.Tensor(x)

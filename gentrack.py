@@ -1,3 +1,5 @@
+import math
+
 import torch
 import matplotlib.pyplot as plt
 from Net import Net
@@ -14,13 +16,13 @@ log_L=[]
 log_Teff=[]
 
 track = []
-age = 1465471476
-for i in range(0, age, 100000000):
-    data = torch.Tensor([1, i])
+age = 11465471475
+for i in range(1, age, 100000000):
+    data = torch.Tensor([1, math.log10(i)])
     output = model(data).tolist()
     print(output)
-    L = output[0]
-    T = output[1]
+    L = output[1]
+    T = output[2]
     # if (0 > L > 10) or (0 > T > 10):
     #     print("Skip")
     #     continue
