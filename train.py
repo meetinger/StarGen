@@ -53,7 +53,7 @@ n_epochs = 500
 # initialize tracker for minimum validation loss
 valid_loss_min = np.Inf  # set initial "min" to infinity
 
-learning_rate = 5e-6
+learning_rate = 5e-4
 
 # optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
