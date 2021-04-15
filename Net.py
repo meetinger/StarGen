@@ -17,31 +17,36 @@ class Net(nn.Module):
         super(Net, self).__init__()
         self.layers = nn.Sequential(
             nn.Linear(2, 500),
-            # nn.ReLU(),
+            # nn.Dropout(0.5),
+            nn.ReLU(),
             nn.Linear(500, 500),
+            # nn.Dropout(0.5),
             # nn.ReLU(),
+            # nn.Linear(500, 1000),
+            # # nn.Dropout(0.5),
+            # nn.ReLU(),
+            # nn.Linear(1000, 500),
+            nn.Dropout(0.5),
+            nn.ReLU(),
             nn.Linear(500, 500),
-            # nn.ReLU(),
-            nn.Linear(500, 500),
-            # nn.ReLU(),
-            nn.Linear(500, 500),
-            # nn.ReLU(),
+            # nn.Dropout(0.5),
+            # nn.Softmax(),
             nn.Linear(500, 4)
         )
-        self.ce = nn.CrossEntropyLoss()
+        # self.ce = nn.CrossEntropyLoss()
 
     def forward(self, x):
         return self.layers(x)
 
-    def training_step(self, batch, batch_idx):
-        x, y = batch
-        x = x.view(x.size(0), -1)
-        y_hat = self.layers(x)
-        loss = self.ce(y_hat, y)
-        self.log('train_loss', loss)
-        return loss
+    # def training_step(self, batch, batch_idx):
+    #     x, y = batch
+    #     x = x.view(x.size(0), -1)
+    #     y_hat = self.layers(x)
+    #     loss = self.ce(y_hat, y)
+    #     self.log('train_loss', loss)
+    #     return loss
 
-    def configure_optimizers(self):
-        optimizer = torch.optim.Adam(self.parameters(), lr=1e-4)
-        return optimizer
+    # def configure_optimizers(self):
+    #     optimizer = torch.optim.Adam(self.parameters(), lr=1e-4)
+    #     return optimizer
 

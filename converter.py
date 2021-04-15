@@ -111,7 +111,7 @@ def create_dataset(data, dataset_obj=True):
     #     return dataset
     # else:
     #     return x, y
-    print(len(x), len(y))
+    # print(len(x), len(y))
     return x, y
 
 # def split_dataset_x_y(x, y, amount):
@@ -176,11 +176,20 @@ def create_big_dataset(path):
         counter = counter + 1
         print("Loading dataset, " + str(counter / len(files) * 100) + "% complete")
 
-    zipped_dataset = []
+    # zipped_dataset = []
+    #
+    # for i in tracks:
+    #     tmp_x, tmp_y = create_dataset(i, False)
+    #     tmp = dict(zip(tmp_x, tmp_y))
+    #     zipped_dataset.append(tmp)
+
+    arr_x = []
+    arr_y = []
 
     for i in tracks:
         tmp_x, tmp_y = create_dataset(i, False)
-        tmp = dict(zip(tmp_x, tmp_y))
-        zipped_dataset.append(tmp)
+        arr_x = arr_x+tmp_x
+        arr_y = arr_y+tmp_y
 
-    return zipped_dataset
+
+    return arr_x, arr_y

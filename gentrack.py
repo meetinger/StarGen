@@ -19,9 +19,9 @@ for i in range(0, age, 100000000):
     print(output)
     L = output[1]
     T = output[2]
-    if (0 > L > 10) or (0 > T > 10):
-        print("Skip")
-        continue
+    # if (0 > L > 10) or (0 > T > 10):
+    #     print("Skip")
+    #     continue
     track.append(output)
 
     log_L.append(L)

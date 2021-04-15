@@ -4,3 +4,5 @@
 *.pyc
 
 datasets/
+
+model.pt
