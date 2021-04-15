@@ -27,13 +27,13 @@ full_y = torch.Tensor(full_y)
 
 full_dataset = TrackDataset(full_x, full_y)
 
-train_size = int(0.75 * len(full_dataset))
+train_size = int(0.9 * len(full_dataset))
 valid_size = len(full_dataset) - train_size
 
 train_dataset, test_dataset = torch.utils.data.random_split(full_dataset, [train_size, valid_size])
 
-train_loader = DataLoader(train_dataset, batch_size=75, shuffle=True)
-valid_loader = DataLoader(test_dataset, batch_size=75, shuffle=True)
+train_loader = DataLoader(train_dataset, batch_size=50, shuffle=False)
+valid_loader = DataLoader(test_dataset, batch_size=50, shuffle=False)
 
 
 
@@ -45,12 +45,12 @@ criterion = nn.L1Loss()
 
 
 
-n_epochs = 100
+n_epochs = 50
 
 # initialize tracker for minimum validation loss
 valid_loss_min = np.Inf  # set initial "min" to infinity
 
-learning_rate = 1e-4
+learning_rate = 1e-3
 
 # optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
 optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
