@@ -13,11 +13,11 @@ import matplotlib.pyplot as plt
 torch.manual_seed(42)
 
 
-track = convert_table_to_track('datasets/test.eep')
+# track = convert_table_to_track('datasets/test.eep')
 
 model = Net()
 
-# track = convert_table_to_track('datasets/tracks/0010000M.track.eep')
+track = convert_table_to_track('datasets/tracks/0010000M.track.eep')
 
 full_x, full_y = create_dataset(track, False)
 # full_x, full_y = create_big_dataset('datasets/tracks_mini')
@@ -38,7 +38,8 @@ valid_loader = DataLoader(test_dataset, batch_size=75, shuffle=True)
 
 
 
-criterion = nn.MSELoss()
+# criterion = nn.MSELoss()
+criterion = nn.L1Loss()
 
 # specify optimizer (stochastic gradient descent) and learning rate = 0.01
 
@@ -49,10 +50,10 @@ n_epochs = 100
 # initialize tracker for minimum validation loss
 valid_loss_min = np.Inf  # set initial "min" to infinity
 
-learning_rate = 1e-16
+learning_rate = 1e-2
 
-optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
-# optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
+# optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
+optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
 
 if os.path.isfile('model.pt'):
     model.load_state_dict(torch.load('model.pt'))

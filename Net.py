@@ -22,32 +22,15 @@ class Net(nn.Module):
             nn.Linear(500, 1000),
             nn.ReLU(),
 
-            nn.Linear(1000, 1500),
-            nn.ReLU(),
+            nn.Linear(1000, 1000),
 
-            nn.Linear(1500, 1500),
-            nn.ReLU(),
-
-            nn.Linear(1500, 2000),
-            nn.ReLU(),
-
-            nn.Linear(2000, 3000),
-            nn.ReLU(),
-
-            nn.Linear(3000, 2000),
-            nn.ReLU(),
-
-            nn.Linear(2000, 1500),
-            nn.ReLU(),
-
-            nn.Linear(1500, 1000),
-            nn.ReLU(),
 
             nn.Linear(1000, 500),
             nn.ReLU(),
 
 
-            nn.Linear(500, 4),
+            nn.Linear(500, 3),
+
 
 
             # nn.Linear(4, 4),

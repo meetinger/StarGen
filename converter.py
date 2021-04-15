@@ -99,7 +99,7 @@ def create_dataset(data, dataset_obj=True):
 
     x = [(initial_params['initial_mass'], i['star_age']) for i in track]
 
-    y = [tuple(i.values())[1::] for i in track]
+    y = [tuple(i.values())[2::] for i in track]
 
     # if(dataset_obj):
     #     tensor_x = torch.Tensor(x)

@@ -14,13 +14,13 @@ log_L=[]
 log_Teff=[]
 
 track = []
-age = 11254091023
+age = 1465471476
 for i in range(0, age, 200000000):
     data = torch.Tensor([1, i])
     output = model(data).tolist()
     print(output)
-    L = output[1]
-    T = output[2]
+    L = output[0]
+    T = output[1]
     # if (0 > L > 10) or (0 > T > 10):
     #     print("Skip")
     #     continue
@@ -34,8 +34,8 @@ for i in range(0, age, 200000000):
 plt.plot(log_L, log_Teff)
 plt.xlabel('log_Teff')
 plt.ylabel('log_L')
-plt.gca().invert_xaxis()
+# plt.gca().invert_xaxis()
 
-path = 'datasets/test.eep'
+path = 'datasets/tracks/0010000M.track.eep'
 track = convert_table_to_track(path)
 draw_track(track)
