@@ -19,7 +19,11 @@ class Net(nn.Module):
             nn.Linear(2, 100),
             # nn.Tanh(),
 
-            nn.Linear(100,100),
+            nn.Linear(100,200),
+            # nn.Dropout(),
+            nn.Tanh(),
+
+            nn.Linear(200, 100),
             # nn.Dropout(),
             nn.Tanh(),
 
