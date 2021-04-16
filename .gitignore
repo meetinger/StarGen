@@ -3,6 +3,6 @@
 
 *.pyc
 
-datasets/
+#datasets/
 
 #model.pt
