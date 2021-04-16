@@ -23,11 +23,9 @@ class Net(nn.Module):
             # nn.Dropout(),
             nn.Tanh(),
 
-            nn.Linear(200, 100),
-            # nn.Dropout(),
-            nn.Tanh(),
 
-            nn.Linear(100, 4),
+
+            nn.Linear(200, 4),
             nn.Linear(4, 4),
         )
         # self.ce = nn.CrossEntropyLoss()

@@ -44,7 +44,7 @@ def train(model, dataset, epochs, lr, device=torch.device("cpu")):
     valid_loss_min = np.Inf  # set initial "min" to infinity
 
     # optimizer = torch.optim.SGD(model.parameters(), lr=lr)
-    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=lr)
 
     if os.path.isfile('model.pt'):
         model.load_state_dict(torch.load('model.pt'))
@@ -133,12 +133,12 @@ net = Net().cuda(device)
 if os.path.isfile('model.pt'):
     net.load_state_dict(torch.load('model.pt'))
 
-path = 'datasets/tracks/0010000M.track.eep'
+path = 'datasets/tracks/1000000M.track.eep'
 
 
 track = convert_table_to_track(path)
 
 # dataset = create_dataset(track, False)
 dataset = create_big_dataset('datasets/tracks')
-train(model=net, dataset=dataset, epochs=50, lr=5e-6, device=device)
+train(model=net, dataset=dataset, epochs=50, lr=5e-5, device=device)
 compare_tracks(model=net,age=11465471475, path=path, device=device)
