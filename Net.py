@@ -16,19 +16,14 @@ class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
         self.layers = nn.Sequential(
-            nn.Linear(2, 500),
+            nn.Linear(2, 100),
+            # nn.Tanh(),
+
+            nn.Linear(100,100),
+            # nn.Dropout(),
             nn.Tanh(),
 
-            nn.Linear(500,700),
-            nn.Dropout(),
-            nn.Tanh(),
-
-            nn.Linear(700, 4),
-            nn.Dropout(),
-            nn.Tanh(),
-
-            nn.Linear(4, 4),
-
+            nn.Linear(100, 4),
             nn.Linear(4, 4),
         )
         # self.ce = nn.CrossEntropyLoss()
