@@ -43,13 +43,13 @@ def compare_tracks(model, path, age=11465471475, device=torch.device("cpu")):
     x_orig = get_column_from_table_dict(track, 'log_Teff')
     y_orig = get_column_from_table_dict(track, 'log_L')
 
-    x, y = gen_track(model, age, device)
+    y, x = gen_track(model, age, device)
 
     plt.plot(x_orig, y_orig, label='Original')
     plt.xlabel('log_Teff')
     plt.ylabel('log_L')
 
-    plt.scatter(x, y, label='Generated')
+    plt.plot(x, y, label='Generated')
     plt.legend()
     plt.gca().invert_xaxis()
     plt.show()
