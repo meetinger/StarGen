@@ -93,8 +93,11 @@ def get_column_from_table_dict(data, key):
     return tmp
 
 
-def scale_data(data):
-    pass
+def scale_age(x):
+    # val = x / 2952141953419
+    # val = ((x*(x+1000000000)*(x-2952141953419))/2952141953419**3)*1000000
+    val = math.log10(x)/2
+    return val
 
 def unscale_data(data):
     pass
@@ -103,7 +106,9 @@ def create_dataset(data, dataset_obj=True):
     initial_params = data['initial_params']
     track = data['track']
 
-    x = [(initial_params['initial_mass'], math.log10(i['star_age'])/2) for i in track]
+    # x = [(initial_params['initial_mass'], math.log10(i['star_age'])/2) for i in track]
+    # x = [(initial_params['initial_mass'], i['star_age']) for i in track]
+    x = [(initial_params['initial_mass'], scale_age(i['star_age'])) for i in track]
 
 
 
