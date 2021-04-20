@@ -25,11 +25,11 @@ def gen_track(model, age=11465471475, mass=1, device=torch.device("cpu"), step =
     # for i in ages:
     #     data = torch.Tensor([1, math.log10(ages[i]) / 2]).to(device)
     #     data = torch.Tensor([1, ages[i]]).to(device)
-        data = torch.Tensor([mass, scale_age(ages[i])]).to(device)
+        data = torch.Tensor([[mass, scale_age(ages[i])]]).to(device)
         output = model(data).tolist()
 
-        L = output[1]
-        T = output[2]
+        L = output[0][1]
+        T = output[0][2]
         # if (0 > L > 10) or (0 > T > 10):
         #     print("Skip")
         #     continue

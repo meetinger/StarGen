@@ -15,20 +15,40 @@ from converter import create_dataset, convert_table_to_track, split_dataset_dict
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.layers = nn.Sequential(
+
+        self.fc1 = nn.Sequential(
             nn.Linear(2, 100),
-            nn.Tanh(),
-
-            nn.Linear(100, 100),
-            # nn.Dropout(),
-            nn.Tanh(),
-
-            nn.Linear(100, 4),
+            nn.Tanh()
+            # nn.Dropout(p=1 - .85),
+            # nn.LeakyReLU(0.1),
         )
-        # self.ce = nn.CrossEntropyLoss()
+        self.fc2 = nn.Sequential(
+            nn.Conv1d(in_channels=100, out_channels=100, kernel_size=1),
+            nn.Tanh(),
+            nn.Conv1d(in_channels=100, out_channels=100, kernel_size=1),
+            nn.Tanh()
+        )
+        self.fc3 = nn.Sequential(
+            nn.Linear(100, 100),
+            nn.Tanh(),
+            nn.Linear(100, 4)
+        )
 
     def forward(self, x):
-        return self.layers(x)
+        y = self.fc1(x)
+
+        y = y.unsqueeze(2)
+        # y = y.unsqueeze(3)
+
+        # print(y)
+
+        y = self.fc2(y)
+
+        # print(y)
+        y = y.squeeze(2)
+
+        y = self.fc3(y)
+        return y
 
     # def training_step(self, batch, batch_idx):
     #     x, y = batch
