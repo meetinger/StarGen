@@ -7,7 +7,7 @@ from converter import convert_table_to_track, get_column_from_table_dict, scale_
 from utils import draw_track
 
 
-def gen_track(model, age=11465471475, device=torch.device("cpu"), step = 100000000):
+def gen_track(model, age=11465471475, mass=1, device=torch.device("cpu"), step = 100000000):
     ages = []
     if type(age) is int:
         ages = range(1, age, step)
@@ -25,7 +25,7 @@ def gen_track(model, age=11465471475, device=torch.device("cpu"), step = 1000000
     # for i in ages:
     #     data = torch.Tensor([1, math.log10(ages[i]) / 2]).to(device)
     #     data = torch.Tensor([1, ages[i]]).to(device)
-        data = torch.Tensor([1, scale_age(ages[i])]).to(device)
+        data = torch.Tensor([mass, scale_age(ages[i])]).to(device)
         output = model(data).tolist()
 
         L = output[1]
@@ -48,11 +48,14 @@ def gen_track(model, age=11465471475, device=torch.device("cpu"), step = 1000000
 
 
 def compare_tracks(model, path, age=11465471475, device=torch.device("cpu")):
-    track = convert_table_to_track(path)['track']
+    data = convert_table_to_track(path)
+    track = data['track']
+    mass = data['initial_params']['initial_mass']
+    print(mass)
     x_orig = get_column_from_table_dict(track, 'log_Teff')
     y_orig = get_column_from_table_dict(track, 'log_L')
 
-    y, x = gen_track(model, get_column_from_table_dict(track, 'star_age'), device)
+    y, x = gen_track(model=model, age=get_column_from_table_dict(track, 'star_age'), mass=mass, device=device)
 
     plt.plot(x_orig, y_orig, label='Original')
     plt.xlabel('log_Teff')
