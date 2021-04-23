@@ -57,7 +57,7 @@ def compare_tracks(model, path, age=11465471475, device=torch.device("cpu")):
 
     y, x = gen_track(model=model, age=get_column_from_table_dict(track, 'star_age'), mass=mass, device=device)
 
-    plt.plot(x_orig, y_orig, label='Original')
+    plt.scatter(x_orig, y_orig, label='Original')
     plt.xlabel('log_Teff')
     plt.ylabel('log_L')
 
