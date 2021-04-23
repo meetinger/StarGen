@@ -3,7 +3,7 @@ import math
 import torch
 import matplotlib.pyplot as plt
 from Net import Net
-from converter import convert_table_to_track, get_column_from_table_dict, scale_age
+from converter import convert_table_to_track, get_column_from_table_dict, scale_age, unscale_output, scale_input
 from utils import draw_track
 
 
@@ -25,8 +25,8 @@ def gen_track(model, age=11465471475, mass=1, device=torch.device("cpu"), step =
     # for i in ages:
     #     data = torch.Tensor([1, math.log10(ages[i]) / 2]).to(device)
     #     data = torch.Tensor([1, ages[i]]).to(device)
-        data = torch.Tensor([mass, scale_age(ages[i])]).to(device)
-        output = model(data).tolist()
+        data = torch.Tensor(scale_input([mass, scale_age(ages[i])])).to(device)
+        output = unscale_output(model(data).tolist())
 
         L = output[1]
         T = output[2]
