@@ -25,8 +25,12 @@ def gen_track(model, age=11465471475, mass=1, device=torch.device("cpu"), step =
     # for i in ages:
     #     data = torch.Tensor([1, math.log10(ages[i]) / 2]).to(device)
     #     data = torch.Tensor([1, ages[i]]).to(device)
-        data = torch.Tensor(scale_input([mass, scale_age(ages[i])])).to(device)
-        output = unscale_output(model(data).tolist())
+
+        # data = torch.Tensor(scale_input([mass, ages[i]])).to(device)
+        # output = unscale_output(model(data).tolist())
+
+        data = torch.Tensor([mass, scale_age(ages[i])]).to(device)
+        output = model(data).tolist()
 
         L = output[1]
         T = output[2]
@@ -37,8 +41,8 @@ def gen_track(model, age=11465471475, mass=1, device=torch.device("cpu"), step =
 
         log_L.append(L)
         log_Teff.append(T)
-
-        print(output)
+        # print(data)
+        # print(output)
         print(i / len(ages) * 100, '%')
     return log_L, log_Teff
 
@@ -55,7 +59,7 @@ def compare_tracks(model, path, age=11465471475, device=torch.device("cpu")):
     x_orig = get_column_from_table_dict(track, 'log_Teff')
     y_orig = get_column_from_table_dict(track, 'log_L')
 
-    y, x = gen_track(model=model, age=get_column_from_table_dict(track, 'star_age'), mass=mass, device=device)
+    y,x = gen_track(model=model, age=get_column_from_table_dict(track, 'star_age'), mass=mass, device=device)
 
     plt.scatter(x_orig, y_orig, label='Original')
     plt.xlabel('log_Teff')

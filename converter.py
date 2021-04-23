@@ -99,9 +99,11 @@ def scale_age(x):
     val = math.log10(x) / 2
     return val
 
+
 def unscale_age(x1):
-    val = (10**(x1*2))
+    val = (10 ** (x1 * 2))
     return val
+
 
 def min_max_scale(x, xmin, xmax, a, b):
     x1 = a + (x - xmin) * (b - a) / (xmax - xmin)
@@ -153,7 +155,8 @@ def unscale_input(data):
     return res
 
 
-def create_dataset(data, dataset_obj=True, datascaling=True):
+# disable datascaling
+def create_dataset(data, dataset_obj=True, datascaling=False):
     initial_params = data['initial_params']
     track = data['track']
 
