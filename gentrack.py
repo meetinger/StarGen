@@ -57,7 +57,7 @@ def gen_track(model, age=11465471475, mass=1, device=torch.device("cpu"), step=1
     # plt.ion()
 
 
-def compare_tracks(model, path, age=11465471475, device=torch.device("cpu")):
+def compare_tracks(model, path, age=11465471475, device=torch.device("cpu"), draw_phases=True):
     data = convert_table_to_track(path)
     track = data['track']
     mass = data['initial_params']['initial_mass']
@@ -79,23 +79,22 @@ def compare_tracks(model, path, age=11465471475, device=torch.device("cpu")):
     plt.xlabel('log_Teff')
     plt.ylabel('log_L')
 
-    last_phase = ""
-    for i in range(0, len(x_orig)):
-        if last_phase != str_phase_orig[i]:
-            plt.text(x_orig[i], y_orig[i], str_phase_orig[i], color='blue',bbox=dict(facecolor='white', edgecolor='blue'))
-            last_phase = str_phase_orig[i]
-
-
 
     plt.scatter(x, y, label='Generated', color='red')
     plt.legend()
     plt.gca().invert_xaxis()
 
-    last_phase = ""
-    for i in range(0, len(x)):
-        if last_phase != str_phase[i]:
-            plt.text(x[i], y[i], str_phase[i], color='red', bbox=dict(facecolor='white', edgecolor='red'))
-            last_phase = str_phase[i]
+    if draw_phases:
+        last_phase = ""
+        for i in range(0, len(x)):
+            if last_phase != str_phase[i]:
+                plt.text(x[i], y[i], str_phase[i], color='red', bbox=dict(facecolor='white', edgecolor='red'))
+                last_phase = str_phase[i]
+        last_phase = ""
+        for i in range(0, len(x_orig)):
+            if last_phase != str_phase_orig[i]:
+                plt.text(x_orig[i], y_orig[i], str_phase_orig[i], color='blue',bbox=dict(facecolor='white', edgecolor='blue'))
+                last_phase = str_phase_orig[i]
 
     plt.show()
 
