@@ -93,6 +93,24 @@ def get_column_from_table_dict(data, key):
     return tmp
 
 
+def phase_to_str(phase):
+    arr = {
+        -1: "PMS",
+        0: "MS",
+        2: "RGB",
+        3: "CHeB",
+        4: "EAGB",
+        5: "TPAGB",
+        6: "PAGB",
+
+        7: "PAGB",
+        8: "WR",
+
+        9: "WR",
+    }
+    return arr.get(round(phase), "Error")
+
+
 def scale_age(x):
     # val = x / 2952141953419
     # val = ((x*(x+1000000000)*(x-2952141953419))/2952141953419**3)*1000000
