@@ -23,7 +23,7 @@ if os.path.isfile('model.pt'):
 net.eval()
 
 
-path = 'datasets/tests/0010000M.track.eep'
+path = 'datasets/tracks/0010000M.track.eep'
 
 
 track = convert_table_to_track(path)

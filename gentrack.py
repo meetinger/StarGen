@@ -8,7 +8,7 @@ from converter import convert_table_to_track, get_column_from_table_dict, scale_
 from utils import draw_track
 
 
-def gen_track(model, age=11465471475, mass=1, device=torch.device("cpu"), step=100000000):
+def gen_track(model, age=11465471475, mass=1, device=torch.device("cpu"), step=100000000, datascaling = True):
     ages = []
     if type(age) is int:
         ages = range(1, age, step)
@@ -29,11 +29,12 @@ def gen_track(model, age=11465471475, mass=1, device=torch.device("cpu"), step=1
         #     data = torch.Tensor([1, math.log10(ages[i]) / 2]).to(device)
         #     data = torch.Tensor([1, ages[i]]).to(device)
 
-        # data = torch.Tensor(scale_input([mass, ages[i]])).to(device)
-        # output = unscale_output(model(data).tolist())
-
-        data = torch.Tensor([mass, scale_age(ages[i])]).to(device)
-        output = model(data).tolist()
+        if datascaling:
+            data = torch.Tensor(scale_input([mass, ages[i]])).to(device)
+            output = unscale_output(model(data).tolist())
+        else:
+            data = torch.Tensor([mass, scale_age(ages[i])]).to(device)
+            output = model(data).tolist()
 
         L = output[1]
         T = output[2]

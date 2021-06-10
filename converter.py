@@ -114,12 +114,12 @@ def phase_to_str(phase):
 def scale_age(x):
     # val = x / 2952141953419
     # val = ((x*(x+1000000000)*(x-2952141953419))/2952141953419**3)*1000000
-    val = math.log10(x) / 2
+    val = math.log10(x)
     return val
 
 
 def unscale_age(x1):
-    val = (10 ** (x1 * 2))
+    val = 10 ** x1
     return val
 
 
@@ -162,6 +162,7 @@ def unscale_output(data):
 def scale_input(data):
     mass = scale(data[0], 0, 120)
     age = scale_age(data[1])
+    # age = scale(scale_age(data[1]), 0, 12.5)
     res = (mass, age)
     return res
 
@@ -169,12 +170,13 @@ def scale_input(data):
 def unscale_input(data):
     mass = unscale(data[0], 0, 120)
     age = unscale_age(data[1])
+    # age = unscale(unscale_age(data[1]), 0, 12.5)
     res = (mass, age)
     return res
 
 
 # disable datascaling
-def create_dataset(data, dataset_obj=True, datascaling=False):
+def create_dataset(data, dataset_obj=True, datascaling=True):
     initial_params = data['initial_params']
     track = data['track']
 

@@ -18,11 +18,11 @@ class Net(nn.Module):
         self.layers = nn.Sequential(
             nn.Linear(2, 50),
             nn.Tanh(),
+            #
+            # nn.Linear(50, 100),
+            # nn.Tanh(),
 
-            nn.Linear(50, 100),
-            nn.Tanh(),
-
-            nn.Linear(100, 250),
+            nn.Linear(50, 250),
             nn.Tanh(),
 
             nn.Linear(250, 400),
