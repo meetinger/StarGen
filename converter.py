@@ -93,27 +93,102 @@ def get_column_from_table_dict(data, key):
     return tmp
 
 
+def phase_to_str(phase):
+    arr = {
+        -1: "PMS",
+        0: "MS",
+        2: "RGB",
+        3: "CHeB",
+        4: "EAGB",
+        5: "TPAGB",
+        6: "PAGB",
+
+        7: "PAGB",
+        8: "WR",
+
+        9: "WR",
+    }
+    return arr.get(round(phase), "Error")
+
+
 def scale_age(x):
     # val = x / 2952141953419
     # val = ((x*(x+1000000000)*(x-2952141953419))/2952141953419**3)*1000000
-    val = math.log10(x)/2
+    val = math.log10(x) / 2
     return val
 
-def unscale_data(data):
-    pass
 
-def create_dataset(data, dataset_obj=True):
+def unscale_age(x1):
+    val = (10 ** (x1 * 2))
+    return val
+
+
+def min_max_scale(x, xmin, xmax, a, b):
+    x1 = a + (x - xmin) * (b - a) / (xmax - xmin)
+    return x1
+
+
+def min_max_unscale(x1, xmin, xmax, a, b):
+    x = (x1 - a) * (xmax - xmin) / (b - a) + xmin
+    return x
+
+
+def scale(x, xmin, xmax):
+    return min_max_scale(x, xmin, xmax, 0, 1)
+
+
+def unscale(x1, xmin, xmax):
+    return min_max_unscale(x1, xmin, xmax, 0, 1)
+
+
+def scale_output(data):
+    mass = scale(data[0], 0, 120)
+    log_L = scale(data[1], -3.5, 6.5)
+    log_Teff = scale(data[2], 3.5, 5.5)
+    phase = scale(data[3], -1, 9)
+    res = (mass, log_L, log_Teff, phase)
+    return res
+
+
+def unscale_output(data):
+    mass = unscale(data[0], 0, 120)
+    log_L = unscale(data[1], -3.5, 6.5)
+    log_Teff = unscale(data[2], 3.5, 5.5)
+    phase = unscale(data[3], -1, 9)
+    res = (mass, log_L, log_Teff, phase)
+    return res
+
+
+def scale_input(data):
+    mass = scale(data[0], 0, 120)
+    age = scale_age(data[1])
+    res = (mass, age)
+    return res
+
+
+def unscale_input(data):
+    mass = unscale(data[0], 0, 120)
+    age = unscale_age(data[1])
+    res = (mass, age)
+    return res
+
+
+# disable datascaling
+def create_dataset(data, dataset_obj=True, datascaling=False):
     initial_params = data['initial_params']
     track = data['track']
 
     # x = [(initial_params['initial_mass'], math.log10(i['star_age'])/2) for i in track]
     # x = [(initial_params['initial_mass'], i['star_age']) for i in track]
-    x = [(initial_params['initial_mass'], scale_age(i['star_age'])) for i in track]
 
+    if datascaling:
+        x = [scale_input((initial_params['initial_mass'], scale_age(i['star_age']))) for i in track]
 
+        y = [scale_output(tuple(i.values())[1::]) for i in track]
 
-    y = [tuple(i.values())[1::] for i in track]
-
+    else:
+        x = [(initial_params['initial_mass'], scale_age(i['star_age'])) for i in track]
+        y = [tuple(i.values())[1::] for i in track]
     # if(dataset_obj):
     #     tensor_x = torch.Tensor(x)
     #     tensor_y = torch.Tensor(y)
@@ -127,6 +202,7 @@ def create_dataset(data, dataset_obj=True):
     # print(len(x), len(y))
     return x, y
 
+
 # def split_dataset_x_y(x, y, amount):
 #     full_size = len(x)
 #
@@ -137,7 +213,6 @@ def create_dataset(data, dataset_obj=True):
 #     random.shuffle(indexes)
 #
 #     x_train, y_train, x_test, y_train = [], [], [], []
-
 
 
 def split_dataset_dict(data, amount=0.8):
@@ -177,6 +252,7 @@ def split_dataset_dict(data, amount=0.8):
         print(len(x_train), len(y_train), len(x_test), len(y_test))
         return (x_train, y_train, x_test, y_test)
 
+
 def create_big_dataset(path):
     files = os.listdir(path)
     # tracks = [convert_table_to_track(dir+'/'+i) for i in files]
@@ -201,8 +277,7 @@ def create_big_dataset(path):
 
     for i in tracks:
         tmp_x, tmp_y = create_dataset(i, False)
-        arr_x = arr_x+tmp_x
-        arr_y = arr_y+tmp_y
-
+        arr_x = arr_x + tmp_x
+        arr_y = arr_y + tmp_y
 
     return arr_x, arr_y
