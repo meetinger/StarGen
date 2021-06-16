@@ -161,22 +161,24 @@ def unscale_output(data):
 
 def scale_input(data):
     mass = scale(data[0], 0, 120)
-    age = scale_age(data[1])
-    # age = scale(scale_age(data[1]), 0, 12.5)
+    # age = scale_age(data[1])
+    age = scale(scale_age(data[1]), 0, 12.5)
+    # age = scale(data[1], 0, 2952141953419)
     res = (mass, age)
     return res
 
 
 def unscale_input(data):
     mass = unscale(data[0], 0, 120)
-    age = unscale_age(data[1])
-    # age = unscale(unscale_age(data[1]), 0, 12.5)
+    # age = unscale_age(data[1])
+    age = unscale_age(unscale(data[1], 0, 12.5))
+    # age = unscale(data[1], 0, 2952141953419)
     res = (mass, age)
     return res
 
 
 # disable datascaling
-def create_dataset(data, dataset_obj=True, datascaling=True):
+def create_dataset(data, datascaling=True):
     initial_params = data['initial_params']
     track = data['track']
 
@@ -185,9 +187,7 @@ def create_dataset(data, dataset_obj=True, datascaling=True):
 
     if datascaling:
         x = [scale_input((initial_params['initial_mass'], scale_age(i['star_age']))) for i in track]
-
         y = [scale_output(tuple(i.values())[1::]) for i in track]
-
     else:
         x = [(initial_params['initial_mass'], scale_age(i['star_age'])) for i in track]
         y = [tuple(i.values())[1::] for i in track]
@@ -255,7 +255,7 @@ def split_dataset_dict(data, amount=0.8):
         return (x_train, y_train, x_test, y_test)
 
 
-def create_big_dataset(path):
+def create_big_dataset(path, datascaling = True):
     files = os.listdir(path)
     # tracks = [convert_table_to_track(dir+'/'+i) for i in files]
     tracks = []
@@ -278,7 +278,7 @@ def create_big_dataset(path):
     arr_y = []
 
     for i in tracks:
-        tmp_x, tmp_y = create_dataset(i, False)
+        tmp_x, tmp_y = create_dataset(data=i, datascaling=datascaling)
         arr_x = arr_x + tmp_x
         arr_y = arr_y + tmp_y
 

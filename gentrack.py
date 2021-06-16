@@ -8,7 +8,7 @@ from converter import convert_table_to_track, get_column_from_table_dict, scale_
 from utils import draw_track
 
 
-def gen_track(model, age=11465471475, mass=1, device=torch.device("cpu"), step=100000000, datascaling = True):
+def gen_track(model, age=11465471475, mass=1, device=torch.device("cpu"), step=100000000, datascaling=True):
     ages = []
     if type(age) is int:
         ages = range(1, age, step)
@@ -58,7 +58,7 @@ def gen_track(model, age=11465471475, mass=1, device=torch.device("cpu"), step=1
     # plt.ion()
 
 
-def compare_tracks(model, path, age=11465471475, device=torch.device("cpu"), draw_phases=True):
+def compare_tracks(model, path, age=11465471475, device=torch.device("cpu"), draw_phases=True, datascaling = True):
     data = convert_table_to_track(path)
     track = data['track']
     mass = data['initial_params']['initial_mass']
@@ -67,7 +67,7 @@ def compare_tracks(model, path, age=11465471475, device=torch.device("cpu"), dra
     y_orig = get_column_from_table_dict(track, 'log_L')
     phase_orig = get_column_from_table_dict(track, 'phase')
 
-    y, x, phase = gen_track(model=model, age=get_column_from_table_dict(track, 'star_age'), mass=mass, device=device)
+    y, x, phase = gen_track(model=model, age=get_column_from_table_dict(track, 'star_age'), mass=mass, device=device, datascaling=datascaling)
 
     str_phase_orig = list(map(phase_to_str, phase_orig))
     str_phase = list(map(phase_to_str, phase_orig))
