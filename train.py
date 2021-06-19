@@ -27,7 +27,7 @@ def train(model, dataset, epochs, lr, device=torch.device("cpu")):
 
     full_dataset = TrackDataset(full_x, full_y)
 
-    train_size = int(0.9 * len(full_dataset))
+    train_size = int(0.8 * len(full_dataset))
     valid_size = len(full_dataset) - train_size
 
     train_dataset, test_dataset = torch.utils.data.random_split(full_dataset, [train_size, valid_size])
@@ -124,7 +124,7 @@ def train(model, dataset, epochs, lr, device=torch.device("cpu")):
 
 torch.manual_seed(42)
 
-datascaling = True
+datascaling = False
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -138,14 +138,14 @@ else:
 if os.path.isfile('model.pt'):
     net.load_state_dict(torch.load('model.pt', map_location=device))
 
-path = 'datasets/tracks/0010000M.track.eep'
+path = 'datasets/tracks/0100000M.track.eep'
 
 
 track = convert_table_to_track(path)
 
 dataset = create_dataset(data=track, datascaling=datascaling)
 #dataset = create_big_dataset('datasets/tracks')
-train(model=net, dataset=dataset, epochs=100, lr=1e-3, device=device)
+train(model=net, dataset=dataset, epochs=100, lr=1e-4, device=device)
 
 if os.path.isfile('model.pt'):
     net.load_state_dict(torch.load('model.pt', map_location=device))

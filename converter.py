@@ -115,11 +115,18 @@ def scale_age(x):
     # val = x / 2952141953419
     # val = ((x*(x+1000000000)*(x-2952141953419))/2952141953419**3)*1000000
     val = math.log10(x)
+    # val = x**(1/3)
+    # val = x**(1/4)
     return val
+
+
+scale_age_factor = scale_age(2952141953419)
 
 
 def unscale_age(x1):
     val = 10 ** x1
+    # val = x1**3
+    # val = x1**4
     return val
 
 
@@ -162,7 +169,7 @@ def unscale_output(data):
 def scale_input(data):
     mass = scale(data[0], 0, 120)
     # age = scale_age(data[1])
-    age = scale(scale_age(data[1]), 0, 12.5)
+    age = scale(scale_age(data[1]), 0, scale_age_factor)
     # age = scale(data[1], 0, 2952141953419)
     res = (mass, age)
     return res
@@ -171,7 +178,7 @@ def scale_input(data):
 def unscale_input(data):
     mass = unscale(data[0], 0, 120)
     # age = unscale_age(data[1])
-    age = unscale_age(unscale(data[1], 0, 12.5))
+    age = unscale_age(unscale(data[1], 0, scale_age_factor))
     # age = unscale(data[1], 0, 2952141953419)
     res = (mass, age)
     return res
