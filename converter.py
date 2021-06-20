@@ -4,6 +4,11 @@ import math
 import pandas as pd
 import torch
 from torch.utils.data import TensorDataset, DataLoader
+import math
+import numpy as np
+from scale_age import a, b, x_ages, y_ages
+
+from scipy import interpolate
 
 
 def clean_split(str, delimiter, ex_chars=None):
@@ -111,12 +116,24 @@ def phase_to_str(phase):
     return arr.get(round(phase), "Error")
 
 
+# a = 0
+# b = 30e+9
+# eps = 1e+9
+# x = [a, 12e+9, b]
+# y = [0, 500, 1000]
+
+spline = interpolate.splrep(x_ages, y_ages, s=0, k=2)
+
+spline_inv = interpolate.splrep(y_ages, x_ages, s=0, k=2)
+
+
 def scale_age(x):
     # val = x / 2952141953419
     # val = ((x*(x+1000000000)*(x-2952141953419))/2952141953419**3)*1000000
-    val = math.log10(x)
+    # val = math.log10(x)
     # val = x**(1/3)
     # val = x**(1/4)
+    val = interpolate.splev(x, spline, der=0)
     return val
 
 
@@ -124,9 +141,10 @@ scale_age_factor = scale_age(2952141953419)
 
 
 def unscale_age(x1):
-    val = 10 ** x1
+    # val = 10 ** x1
     # val = x1**3
     # val = x1**4
+    val = interpolate.splev(x1, spline_inv, der=0)
     return val
 
 
@@ -262,7 +280,7 @@ def split_dataset_dict(data, amount=0.8):
         return (x_train, y_train, x_test, y_test)
 
 
-def create_big_dataset(path, datascaling = True):
+def create_big_dataset(path, datascaling=True):
     files = os.listdir(path)
     # tracks = [convert_table_to_track(dir+'/'+i) for i in files]
     tracks = []
