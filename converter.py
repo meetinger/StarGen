@@ -6,9 +6,10 @@ import torch
 from torch.utils.data import TensorDataset, DataLoader
 import math
 import numpy as np
-from scale_age import a, b, x_ages, y_ages
 
 from scipy import interpolate
+
+from scale_age import scale_age
 
 
 def clean_split(str, delimiter, ex_chars=None):
@@ -122,30 +123,7 @@ def phase_to_str(phase):
 # x = [a, 12e+9, b]
 # y = [0, 500, 1000]
 
-spline = interpolate.splrep(x_ages, y_ages, s=0, k=2)
 
-spline_inv = interpolate.splrep(y_ages, x_ages, s=0, k=2)
-
-
-def scale_age(x):
-    # val = x / 2952141953419
-    # val = ((x*(x+1000000000)*(x-2952141953419))/2952141953419**3)*1000000
-    # val = math.log10(x)
-    # val = x**(1/3)
-    # val = x**(1/4)
-    val = interpolate.splev(x, spline, der=0)
-    return val
-
-
-scale_age_factor = scale_age(2952141953419)
-
-
-def unscale_age(x1):
-    # val = 10 ** x1
-    # val = x1**3
-    # val = x1**4
-    val = interpolate.splev(x1, spline_inv, der=0)
-    return val
 
 
 def min_max_scale(x, xmin, xmax, a, b):
@@ -203,18 +181,18 @@ def unscale_input(data):
 
 
 # disable datascaling
-def create_dataset(data, datascaling=True):
+def create_dataset(data, datascaling=False):
     initial_params = data['initial_params']
     track = data['track']
 
     # x = [(initial_params['initial_mass'], math.log10(i['star_age'])/2) for i in track]
     # x = [(initial_params['initial_mass'], i['star_age']) for i in track]
-
+    last_age = track[-1]['star_age']
     if datascaling:
-        x = [scale_input((initial_params['initial_mass'], scale_age(i['star_age']))) for i in track]
+        x = [scale_input((initial_params['initial_mass'], scale_age(i['star_age'], last_age))) for i in track]
         y = [scale_output(tuple(i.values())[1::]) for i in track]
     else:
-        x = [(initial_params['initial_mass'], scale_age(i['star_age'])) for i in track]
+        x = [(initial_params['initial_mass'], scale_age(i['star_age'], last_age)) for i in track]
         y = [tuple(i.values())[1::] for i in track]
     # if(dataset_obj):
     #     tensor_x = torch.Tensor(x)

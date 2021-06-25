@@ -10,14 +10,19 @@ from utils import draw_track
 
 def gen_track(model, age=11465471475, mass=1, device=torch.device("cpu"), step=100000000, datascaling=True):
     ages = []
+    last_age = 0
     if type(age) is int:
         ages = range(1, age, step)
+        last_age=age
     else:
         ages = age
+        last_age = age[-1]
 
     log_L = []
     log_Teff = []
     phase = []
+
+
 
     model.eval()
     model.to(device)
@@ -33,7 +38,7 @@ def gen_track(model, age=11465471475, mass=1, device=torch.device("cpu"), step=1
             data = torch.Tensor(scale_input([mass, ages[i]])).to(device)
             output = unscale_output(model(data).tolist())
         else:
-            data = torch.Tensor([mass, scale_age(ages[i])]).to(device)
+            data = torch.Tensor([mass, scale_age(ages[i], last_age)]).to(device)
             output = model(data).tolist()
 
         L = output[1]
@@ -58,7 +63,7 @@ def gen_track(model, age=11465471475, mass=1, device=torch.device("cpu"), step=1
     # plt.ion()
 
 
-def compare_tracks(model, path, age=11465471475, device=torch.device("cpu"), draw_phases=True, datascaling = True):
+def compare_tracks(model, path, age=11465471475, device=torch.device("cpu"), draw_phases=True, datascaling = False):
     data = convert_table_to_track(path)
     track = data['track']
     mass = data['initial_params']['initial_mass']
