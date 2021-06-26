@@ -258,7 +258,7 @@ def split_dataset_dict(data, amount=0.8):
         return (x_train, y_train, x_test, y_test)
 
 
-def create_big_dataset(path, datascaling=True):
+def create_big_dataset(path, datascaling=False):
     files = os.listdir(path)
     # tracks = [convert_table_to_track(dir+'/'+i) for i in files]
     tracks = []

@@ -96,4 +96,4 @@ def test(a, b, divider, k=2.1):
     plt.show()
 
 
-test(a=1, b=12e+9, divider=3, k=2.2)
+test(a=1, b=30e+9, divider=5, k=2)
