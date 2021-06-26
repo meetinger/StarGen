@@ -31,12 +31,10 @@ def f(x):
 # spline_inv = interpolate.splrep(y_ages, x_ages, s=0, k=2)
 
 
-def gen_spline(b, inv=False):
+def gen_spline(b, a=1, divider=3, k=2.2, inv=False):
     # print("AGE:", b)
-    a = 1
-    eps = (b - a) // 3
+    eps = (b - a) // divider
 
-    k = 2.1
     x_ages = list(np.arange(0, b, eps))
     x_ages[0] = 1
     # print(len(x_ages))
@@ -54,7 +52,7 @@ def gen_spline(b, inv=False):
 
 
 def scale_age(x, last_age):
-    val = interpolate.splev(x, gen_spline(last_age, False), der=0)
+    val = interpolate.splev(x, gen_spline(b=last_age, inv=False), der=0)
     return val
 
 
@@ -62,25 +60,33 @@ def scale_age(x, last_age):
 
 
 def unscale_age(x1, last_age):
-    val = interpolate.splev(x1, gen_spline(last_age, True), der=0)
+    val = interpolate.splev(x1, gen_spline(b=last_age, inv=True), der=0)
     return val
 
 
-def test():
+def test(a, b, divider, k=2.1):
+    spline = gen_spline(b=b, a=a, divider=divider, k=k, inv=False)
+    eps = (b - a) // divider
+
+    x_ages = list(np.arange(0, b, eps))
+    x_ages[0] = 1
+
     x_for_plot = list(np.arange(a, b, eps / 10))
+
+    tmp = [f(x_ages[i]) for i in range(0, len(x_ages) // 2)]
+    # print(len(tmp))
+
+    y_ages = tmp + (([tmp[len(tmp) - 1] * k / 2]) if (len(x_ages) % 2 != 0) else []) + [
+        -i + k * tmp[len(x_ages) // 2 - 1] for i in reversed(tmp)]
 
     plt.scatter(x_ages, y_ages, label='Points', color='blue')
 
-    spline = interpolate.splrep(x_ages, y_ages, s=0)
-
     y_interpolated = interpolate.splev(x_for_plot, spline, der=0)
 
-    spline_inv = interpolate.splrep(y_ages, x_ages, s=0)
+    # x_calc = interpolate.splev(y_interpolated, spline_inv, der=0)
 
-    x_calc = interpolate.splev(y_interpolated, spline_inv, der=0)
-
-    print(np.array(x_for_plot))
-    print(x_calc)
+    # print(np.array(x_for_plot))
+    # print(x_calc)
 
     plt.plot(x_for_plot, y_interpolated, label='Interpolated')
 
@@ -90,4 +96,4 @@ def test():
     plt.show()
 
 
-# test()
+test(a=1, b=12e+9, divider=3, k=2.2)
