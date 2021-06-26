@@ -31,7 +31,12 @@ def f(x):
 # spline_inv = interpolate.splrep(y_ages, x_ages, s=0, k=2)
 
 
-def gen_spline(b, a=1, divider=3, k=2.2, inv=False):
+base_a = 1
+base_divider = 4
+base_k = 2.3
+
+
+def gen_spline(b, a=base_a, divider=base_divider, k=base_k, inv=False):
     # print("AGE:", b)
     eps = (b - a) // divider
 
@@ -96,4 +101,4 @@ def test(a, b, divider, k=2.1):
     plt.show()
 
 
-test(a=1, b=30e+9, divider=5, k=2)
+test(a=1, b=30e+9, divider=base_divider, k=base_k)

@@ -23,9 +23,9 @@ if os.path.isfile('model.pt'):
 net.eval()
 
 
-path = 'datasets/tracks/0010000M.track.eep'
+path = 'datasets/tracks/0001000M.track.eep'
 
 
 track = convert_table_to_track(path)
 
-compare_tracks(model=net, path=path, device=device)
+compare_tracks(model=net, path=path, device=device, draw_phases=False)
