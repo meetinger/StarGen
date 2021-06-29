@@ -15,37 +15,29 @@ from converter import create_dataset, convert_table_to_track, split_dataset_dict
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.layers = nn.Sequential(
-            nn.Linear(2, 100),
-            nn.ReLU(),
-
-            nn.Linear(100, 200),
-            nn.ReLU(),
-
-            nn.Linear(200, 350),
-            nn.ReLU(),
-
-            nn.Linear(350, 500),
-            nn.ReLU(),
-
-            nn.Linear(500, 600),
-            nn.ReLU(),
-
-            nn.Linear(600, 800),
-            nn.ReLU(),
-
-            nn.Linear(800, 1000),
-            nn.ReLU(),
-
-            nn.Linear(1000, 1200),
-            nn.ReLU(),
-
-            nn.Linear(1200, 4),
+        self.layers1 = nn.Sequential(
+            nn.Linear(2, 2),
         )
+        self.layers2 = nn.Sequential(
+            nn.LSTM(input_size=2, hidden_size=500, num_layers=1),
+        )
+
+        self.layers3 = nn.Sequential(
+            nn.Linear(500, 250),
+            nn.ReLU(),
+            nn.Linear(250, 4),
+        )
+
         # self.ce = nn.CrossEntropyLoss()
 
     def forward(self, x):
-        return self.layers(x)
+        out = self.layers1(x)
+        out = out.unsqueeze(0)
+        out = self.layers2(out)
+        out = self.layers3(out[0])
+        out = out.squeeze(0)
+        out = out.squeeze(0)
+        return out
 
     # def training_step(self, batch, batch_idx):
     #     x, y = batch
@@ -58,4 +50,3 @@ class Net(nn.Module):
     # def configure_optimizers(self):
     #     optimizer = torch.optim.Adam(self.parameters(), lr=1e-4)
     #     return optimizer
-

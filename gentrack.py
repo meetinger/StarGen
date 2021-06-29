@@ -38,8 +38,10 @@ def gen_track(model, age=11465471475, mass=1, device=torch.device("cpu"), step=1
             data = torch.Tensor(scale_input([mass, ages[i]])).to(device)
             output = unscale_output(model(data).tolist())
         else:
-            data = torch.Tensor([mass, scale_age(ages[i], last_age)]).to(device)
+            data = torch.Tensor([[mass, scale_age(ages[i], last_age)]]).to(device)
             output = model(data).tolist()
+
+
 
         L = output[1]
         T = output[2]

@@ -144,8 +144,8 @@ path = 'datasets/tracks/0010000M.track.eep'
 track = convert_table_to_track(path)
 
 dataset = create_dataset(data=track, datascaling=datascaling)
-dataset = create_big_dataset('datasets/tracks')
-train(model=net, dataset=dataset, epochs=50, lr=1e-3, device=device)
+#dataset = create_big_dataset('datasets/tracks')
+train(model=net, dataset=dataset, epochs=100, lr=1e-3, device=device)
 
 if os.path.isfile('model.pt'):
     net.load_state_dict(torch.load('model.pt', map_location=device))
