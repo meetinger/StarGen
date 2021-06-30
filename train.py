@@ -126,14 +126,19 @@ torch.manual_seed(42)
 
 datascaling = False
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+cuda = True
+
+device = torch.device("cuda" if torch.cuda.is_available() and cuda else "cpu")
 
 net = Net()
-if torch.cuda.is_available():
+if torch.cuda.is_available() and cuda:
     net = net.cuda(device)
     print("Cuda Available!")
 else:
-    print("Cuda Not Available!")
+    if not torch.cuda.is_available():
+        print("Cuda Not Available!")
+    else:
+        print("Cuda Available but disabled!")
 
 if os.path.isfile('model.pt'):
     net.load_state_dict(torch.load('model.pt', map_location=device))
