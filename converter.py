@@ -1,13 +1,6 @@
 import os
 import random
-import math
-import pandas as pd
-import torch
-from torch.utils.data import TensorDataset, DataLoader
-import math
-import numpy as np
 
-from scipy import interpolate
 
 from scale_age import scale_age
 
