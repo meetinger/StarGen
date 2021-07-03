@@ -6,3 +6,5 @@
 #datasets/
 
 #model.pt
+
+datasets/tracks_for_interpolation/

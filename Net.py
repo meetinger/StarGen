@@ -16,28 +16,21 @@ class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
         self.layers1 = nn.Sequential(
-            nn.Linear(2, 100),
-            nn.ReLU(),
-            nn.Linear(100, 250),
-            nn.ReLU(),
-            nn.Linear(250, 500),
+            nn.Linear(2, 500),
         )
         self.layers2 = nn.Sequential(
             nn.LSTM(input_size=500, hidden_size=500, num_layers=2),
         )
 
         self.layers3 = nn.Sequential(
-            nn.Linear(500, 250),
-            nn.ReLU(),
-            nn.Linear(250, 100),
-            nn.ReLU(),
-            nn.Linear(100, 4),
+            nn.Linear(500, 4),
         )
 
         # self.ce = nn.CrossEntropyLoss()
 
     def forward(self, x):
-        out = self.layers1(x)
+        out = x
+        out = self.layers1(out)
         out = out.unsqueeze(0)
         out = self.layers2(out)
         out = self.layers3(out[0])
