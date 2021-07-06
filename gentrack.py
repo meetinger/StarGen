@@ -1,4 +1,5 @@
 import math
+import time
 
 import torch
 import matplotlib.pyplot as plt
@@ -65,6 +66,7 @@ def gen_track(model, age=11465471475, mass=1, device=torch.device("cpu"), step=1
     # plt.ion()
 
 
+
 def interpolate(path, mass):
     paths = load_files(path)
     masses = list(paths.keys())
@@ -75,8 +77,8 @@ def interpolate(path, mass):
         if masses[i - 1] <= mass <= masses[i]:
             mass_a, mass_b = masses[i - 1], masses[i]
 
-    # if mass_a == mass:
-    #     mass_a = masses[masses.index(mass_a) - 1]
+    if mass_a == mass:
+        mass_a = masses[masses.index(mass_a) - 1]
 
     print(mass_a, mass_b)
 
@@ -118,6 +120,62 @@ def interpolate(path, mass):
 
         interpolated.append(tmp)
 
+    star_age = get_column_from_table_dict(interpolated, 'star_age')
+    star_mass = get_column_from_table_dict(interpolated, 'star_mass')
+    log_L = get_column_from_table_dict(interpolated, 'log_L')
+    log_Teff = get_column_from_table_dict(interpolated, 'log_Teff')
+    phase = get_column_from_table_dict(interpolated, 'phase')
+
+    smoothed = []
+
+    smooth_period = 100
+
+    #moving average
+    for i in range(0, max_len):
+        slice_bound_left = max(1, i-smooth_period)
+        slice_bound_right = max(i, 2)
+        # exp = (slice_bound_right - slice_bound_left) <= smooth_period < i
+        # exp = (max_len-i) <= smooth_period < i
+        # if exp:
+        #     slice_bound_left = i
+        #     slice_bound_right = max_len
+        slice_size = slice_bound_right-slice_bound_left
+        # print(slice_bound_left, slice_bound_right, slice_size, exp)
+        star_age_tmp = star_age[slice_bound_left:slice_bound_right]
+        star_mass_tmp = star_mass[slice_bound_left:slice_bound_right]
+        log_L_tmp = log_L[slice_bound_left:slice_bound_right]
+        log_Teff_tmp = log_Teff[slice_bound_left:slice_bound_right]
+        tmp = {
+            'star_age': sum(star_age_tmp)/slice_size,
+            'star_mass': sum(star_mass_tmp)/slice_size,
+            'log_L': sum(log_L_tmp)/slice_size,
+            'log_Teff': sum(log_Teff_tmp)/slice_size,
+            'phase': phase[i]
+        }
+        smoothed.append(tmp)
+
+    # arithmetical mean
+    # for i in range(smooth_period, max_len, smooth_period):
+    #     slice_bound_left = i-smooth_period
+    #     slice_bound_right = i
+    #     if i > (max_len - smooth_period):
+    #         slice_bound_right = max_len
+    #         slice_bound_left = i
+    #     slice_size = slice_bound_right-slice_bound_left
+    #     print(slice_bound_left, slice_bound_right, slice_size)
+    #     star_age_tmp = star_age[slice_bound_left:slice_bound_right]
+    #     star_mass_tmp = star_mass[slice_bound_left:slice_bound_right]
+    #     log_L_tmp = log_L[slice_bound_left:slice_bound_right]
+    #     log_Teff_tmp = log_Teff[slice_bound_left:slice_bound_right]
+    #     tmp = {
+    #         'star_age': sum(star_age_tmp)/slice_size,
+    #         'star_mass': sum(star_mass_tmp)/slice_size,
+    #         'log_L': sum(log_L_tmp)/slice_size,
+    #         'log_Teff': sum(log_Teff_tmp)/slice_size,
+    #         'phase': phase[i]
+    #     }
+    #     smoothed.append(tmp)
+
     x_a = get_column_from_table_dict(track_a, 'log_Teff')
     y_a = get_column_from_table_dict(track_a, 'log_L')
 
@@ -127,15 +185,19 @@ def interpolate(path, mass):
     x_interpolated = get_column_from_table_dict(interpolated, 'log_Teff')
     y_interpolated = get_column_from_table_dict(interpolated, 'log_L')
 
+    x_smoothed = get_column_from_table_dict(smoothed, 'log_Teff')
+    y_smoothed = get_column_from_table_dict(smoothed, 'log_L')
+
     track_orig = convert_table_to_track('datasets/tracks/0010000M.track.eep')
     track = track_orig['track']
     x_orig = get_column_from_table_dict(track, 'log_Teff')
     y_orig = get_column_from_table_dict(track, 'log_L')
-    plt.scatter(x_orig, y_orig, label='Orig', color='orange')
+    # plt.scatter(x_orig, y_orig, label='Orig', color='orange')
 
-    plt.plot(x_a, y_a, label='A', color='blue')
-    plt.plot(x_b, y_b, label='B', color='red')
+    # plt.plot(x_a, y_a, label='A', color='blue')
+    # plt.plot(x_b, y_b, label='B', color='red')
     plt.plot(x_interpolated, y_interpolated, label='Interpolated', color='green')
+    plt.plot(x_smoothed, y_smoothed, label='Smoothed', color='pink')
 
 
 
@@ -191,7 +253,7 @@ def compare_tracks(model, path, age=11465471475, device=torch.device("cpu"), dra
     plt.show()
 
 
-interpolate('datasets/tracks_for_interpolation', 1)
+interpolate('datasets/tracks', 1)
 
 
 # net = Net()
