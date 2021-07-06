@@ -126,14 +126,19 @@ torch.manual_seed(42)
 
 datascaling = False
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+cuda = True
+
+device = torch.device("cuda" if torch.cuda.is_available() and cuda else "cpu")
 
 net = Net()
-if torch.cuda.is_available():
+if torch.cuda.is_available() and cuda:
     net = net.cuda(device)
     print("Cuda Available!")
 else:
-    print("Cuda Not Available!")
+    if not torch.cuda.is_available():
+        print("Cuda Not Available!")
+    else:
+        print("Cuda Available but disabled!")
 
 if os.path.isfile('model.pt'):
     net.load_state_dict(torch.load('model.pt', map_location=device))
@@ -144,8 +149,8 @@ path = 'datasets/tracks/0010000M.track.eep'
 track = convert_table_to_track(path)
 
 dataset = create_dataset(data=track, datascaling=datascaling)
-dataset = create_big_dataset('datasets/tracks')
-train(model=net, dataset=dataset, epochs=50, lr=1e-3, device=device)
+#dataset = create_big_dataset('datasets/tracks')
+train(model=net, dataset=dataset, epochs=100, lr=1e-3, device=device)
 
 if os.path.isfile('model.pt'):
     net.load_state_dict(torch.load('model.pt', map_location=device))

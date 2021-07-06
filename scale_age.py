@@ -101,4 +101,4 @@ def test(a, b, divider, k=2.1):
     plt.show()
 
 
-test(a=1, b=30e+9, divider=base_divider, k=base_k)
+#test(a=1, b=30e+9, divider=base_divider, k=base_k)

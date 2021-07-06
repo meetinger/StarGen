@@ -279,3 +279,14 @@ def create_big_dataset(path, datascaling=False):
         arr_y = arr_y + tmp_y
 
     return arr_x, arr_y
+
+
+def load_files(path):
+    tables = {}
+
+    files = os.listdir(path)
+    for i in files:
+        mass = float(read_table(path+'/'+i, header_line=6, delimiter=" ", header_params=['initial_mass'], max_line=8)[0]['initial_mass'])
+        tables[mass] = path+'/'+i
+
+    return tables
