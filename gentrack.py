@@ -66,11 +66,61 @@ def gen_track(model, age=11465471475, mass=1, device=torch.device("cpu"), step=1
     # plt.ion()
 
 
+def smooth_track(track, smooth_period=10, use_arithmetical_mean=False):
+    star_age = get_column_from_table_dict(track, 'star_age')
+    star_mass = get_column_from_table_dict(track, 'star_mass')
+    log_L = get_column_from_table_dict(track, 'log_L')
+    log_Teff = get_column_from_table_dict(track, 'log_Teff')
+    phase = get_column_from_table_dict(track, 'phase')
+
+    smoothed = []
+
+    max_len = len(track)
+    if not use_arithmetical_mean:
+        #moving average
+        for i in range(0, max_len+smooth_period):
+            slice_bound_left = max(1, i-smooth_period)
+            slice_bound_right = min(max(i, 2), max_len)
+            slice_size = slice_bound_right-slice_bound_left
+            star_age_tmp = star_age[slice_bound_left:slice_bound_right]
+            star_mass_tmp = star_mass[slice_bound_left:slice_bound_right]
+            log_L_tmp = log_L[slice_bound_left:slice_bound_right]
+            log_Teff_tmp = log_Teff[slice_bound_left:slice_bound_right]
+            tmp = {
+                'star_age': sum(star_age_tmp)/slice_size,
+                'star_mass': sum(star_mass_tmp)/slice_size,
+                'log_L': sum(log_L_tmp)/slice_size,
+                'log_Teff': sum(log_Teff_tmp)/slice_size,
+                'phase': phase[min(i, max_len-1)]
+            }
+            smoothed.append(tmp)
+    else:
+        for i in range(smooth_period, max_len, smooth_period):
+            slice_bound_left = i-smooth_period
+            slice_bound_right = i
+            if i > (max_len - smooth_period):
+                slice_bound_right = max_len
+                slice_bound_left = i
+            slice_size = slice_bound_right-slice_bound_left
+            star_age_tmp = star_age[slice_bound_left:slice_bound_right]
+            star_mass_tmp = star_mass[slice_bound_left:slice_bound_right]
+            log_L_tmp = log_L[slice_bound_left:slice_bound_right]
+            log_Teff_tmp = log_Teff[slice_bound_left:slice_bound_right]
+            tmp = {
+                'star_age': sum(star_age_tmp)/slice_size,
+                'star_mass': sum(star_mass_tmp)/slice_size,
+                'log_L': sum(log_L_tmp)/slice_size,
+                'log_Teff': sum(log_Teff_tmp)/slice_size,
+                'phase': phase[i]
+            }
+            smoothed.append(tmp)
+
+    return smoothed
 
 def interpolate(path, mass):
     paths = load_files(path)
     masses = list(paths.keys())
-    print(masses)
+    # print(masses)
 
     mass_a, mass_b = masses[0], masses[1]
     for i in range(1, len(masses)):
@@ -80,7 +130,7 @@ def interpolate(path, mass):
     if mass_a == mass:
         mass_a = masses[masses.index(mass_a) - 1]
 
-    print(mass_a, mass_b)
+    # print(mass_a, mass_b)
 
     track_a = convert_table_to_track(paths[mass_a])['track']
 
@@ -96,7 +146,7 @@ def interpolate(path, mass):
 
     max_len = min(len(track_a), len(track_b))
 
-    print(max_len)
+    # print(max_len)
 
     interpolated = []
 
@@ -120,61 +170,10 @@ def interpolate(path, mass):
 
         interpolated.append(tmp)
 
-    star_age = get_column_from_table_dict(interpolated, 'star_age')
-    star_mass = get_column_from_table_dict(interpolated, 'star_mass')
-    log_L = get_column_from_table_dict(interpolated, 'log_L')
-    log_Teff = get_column_from_table_dict(interpolated, 'log_Teff')
-    phase = get_column_from_table_dict(interpolated, 'phase')
 
-    smoothed = []
+    smoothed = interpolated
 
-    smooth_period = 50
-
-    #moving average
-    for i in range(0, max_len+smooth_period):
-        slice_bound_left = max(1, i-smooth_period)
-        slice_bound_right = min(max(i, 2), max_len)
-        # exp = (slice_bound_right - slice_bound_left) <= smooth_period < i
-        # exp = slice_bound_right-slice_bound_left <= smooth_period
-        # if exp:
-        #     slice_bound_left = i
-        #     slice_bound_right = max_len
-        slice_size = slice_bound_right-slice_bound_left
-        print(slice_bound_left, slice_bound_right, slice_size)
-        star_age_tmp = star_age[slice_bound_left:slice_bound_right]
-        star_mass_tmp = star_mass[slice_bound_left:slice_bound_right]
-        log_L_tmp = log_L[slice_bound_left:slice_bound_right]
-        log_Teff_tmp = log_Teff[slice_bound_left:slice_bound_right]
-        tmp = {
-            'star_age': sum(star_age_tmp)/slice_size,
-            'star_mass': sum(star_mass_tmp)/slice_size,
-            'log_L': sum(log_L_tmp)/slice_size,
-            'log_Teff': sum(log_Teff_tmp)/slice_size,
-            'phase': phase[min(i, max_len-1)]
-        }
-        smoothed.append(tmp)
-
-    # arithmetical mean
-    # for i in range(smooth_period, max_len, smooth_period):
-    #     slice_bound_left = i-smooth_period
-    #     slice_bound_right = i
-    #     if i > (max_len - smooth_period):
-    #         slice_bound_right = max_len
-    #         slice_bound_left = i
-    #     slice_size = slice_bound_right-slice_bound_left
-    #     print(slice_bound_left, slice_bound_right, slice_size)
-    #     star_age_tmp = star_age[slice_bound_left:slice_bound_right]
-    #     star_mass_tmp = star_mass[slice_bound_left:slice_bound_right]
-    #     log_L_tmp = log_L[slice_bound_left:slice_bound_right]
-    #     log_Teff_tmp = log_Teff[slice_bound_left:slice_bound_right]
-    #     tmp = {
-    #         'star_age': sum(star_age_tmp)/slice_size,
-    #         'star_mass': sum(star_mass_tmp)/slice_size,
-    #         'log_L': sum(log_L_tmp)/slice_size,
-    #         'log_Teff': sum(log_Teff_tmp)/slice_size,
-    #         'phase': phase[i]
-    #     }
-    #     smoothed.append(tmp)
+    smoothed = smooth_track(smoothed, smooth_period=10, use_arithmetical_mean=False)
 
     x_a = get_column_from_table_dict(track_a, 'log_Teff')
     y_a = get_column_from_table_dict(track_a, 'log_L')
