@@ -128,19 +128,19 @@ def interpolate(path, mass):
 
     smoothed = []
 
-    smooth_period = 100
+    smooth_period = 50
 
     #moving average
-    for i in range(0, max_len):
+    for i in range(0, max_len+smooth_period):
         slice_bound_left = max(1, i-smooth_period)
-        slice_bound_right = max(i, 2)
+        slice_bound_right = min(max(i, 2), max_len)
         # exp = (slice_bound_right - slice_bound_left) <= smooth_period < i
-        # exp = (max_len-i) <= smooth_period < i
+        # exp = slice_bound_right-slice_bound_left <= smooth_period
         # if exp:
         #     slice_bound_left = i
         #     slice_bound_right = max_len
         slice_size = slice_bound_right-slice_bound_left
-        # print(slice_bound_left, slice_bound_right, slice_size, exp)
+        print(slice_bound_left, slice_bound_right, slice_size)
         star_age_tmp = star_age[slice_bound_left:slice_bound_right]
         star_mass_tmp = star_mass[slice_bound_left:slice_bound_right]
         log_L_tmp = log_L[slice_bound_left:slice_bound_right]
@@ -150,7 +150,7 @@ def interpolate(path, mass):
             'star_mass': sum(star_mass_tmp)/slice_size,
             'log_L': sum(log_L_tmp)/slice_size,
             'log_Teff': sum(log_Teff_tmp)/slice_size,
-            'phase': phase[i]
+            'phase': phase[min(i, max_len-1)]
         }
         smoothed.append(tmp)
 
